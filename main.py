@@ -126,7 +126,7 @@ def doIssue():
 def execute(nI,time):
     global instFinish
     updateResSta(nI,8,time-1)
-    if(time-1 ==0):
+    if(time-1 == 0):
         inStatus[nI][1][1]=True
         instFinish+=[nI]
     
@@ -213,8 +213,8 @@ def main():
     while(1):
         input("")
         print("---------------------------CICLO: "+str(cont)+"-----------------------")
-        doWrite()
         upResSat()
+        doWrite()
         doExe()
         printRegStatus()
         printInStatus()
