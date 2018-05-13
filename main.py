@@ -226,4 +226,5 @@ def main():
     print(instInit)
     print("Salida de Instrucciones")
     print(list(dict.fromkeys(instFinish)))
+    input("Presione enter para terminar")
 main()
