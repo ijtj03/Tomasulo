@@ -182,12 +182,12 @@ def doExe():
                and not flagE and resStation[x][8]!=0):
                 toExe+=[[x,resStation[x][8]]]
                 flagE=True
-    
-        if(resStation[x][4] == "" and
-           resStation[x][5] == "" and not flagF
-           and resStation[x][8]!=0):
-            toExe+=[[x,resStation[x][8]]]
-            flagF=True
+        else:
+            if(resStation[x][4] == "" and
+               resStation[x][5] == "" and not flagF
+               and resStation[x][8]!=0):
+                toExe+=[[x,resStation[x][8]]]
+                flagF=True
         if(flagF and flagE):
             break
     for x in toExe:
@@ -213,9 +213,9 @@ def main():
     while(1):
         input("")
         print("---------------------------CICLO: "+str(cont)+"-----------------------")
-        upResSat()
         doWrite()
         doExe()
+        upResSat()
         printRegStatus()
         printInStatus()
         printResStation()
