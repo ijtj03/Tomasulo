@@ -25,15 +25,7 @@ regs = {"F0":0,"F1":0,
        "R4":0,"R5":0,
        "R6":0,"R7":0,}
 
-resStation = {1:[False,"","","","","","","",0,0],
-              2:[False,"","","","","","","",0,0],
-              3:[False,"","","","","","","",0,0],
-              4:[False,"","","","","","","",0,0],
-              5:[False,"","","","","","","",0,0],
-              6:[False,"","","","","","","",0,0],
-              7:[False,"","","","","","","",0,0],
-              8:[False,"","","","","","","",0,0],
-              9:[False,"","","","","","","",0,0]}
+resStation = {}
 
 
 filepath = 'code.txt'  
@@ -43,6 +35,7 @@ with open(filepath) as fp:
    while line:
        inStatus[cnt]=[str(line[:-1]).split(),[False,False,False]]
        instInit+=[cnt]
+       resStation[cnt]=[False,"","","","","","","",0,0]
        line = fp.readline()
        cnt += 1
 
