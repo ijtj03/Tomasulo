@@ -4,7 +4,12 @@ import tkinter as tk
 
 ventana = tk.Tk()
 ventana.title("Tomasulo step by step")#nombre ventana
-ventana.geometry("380x300")#ancho por alto
+ventana.geometry("850x600")#ancho por alto
+
+##ventana.overrideredirect(True)
+##ventana.overrideredirect(False)
+ventana.attributes('-fullscreen',True)
+
 ventana.configure(background = 'cadet blue')
 
 etiqueta1 = tk.Label(ventana,text="TOMASULO ALGORITHM", bg = "BLUE", fg="white")
@@ -12,6 +17,7 @@ etiqueta1.pack()
 
 instInit  = []
 instFinish = []
+instExe={}
 pE = 0
 pF = 0
 tCB = 0
@@ -107,43 +113,72 @@ def loadCode():
        line = fp.readline()
        cnt = 1
        while line:
-           inStatus[cnt]=[str(line[:-1]).split(),[False,False,False]]
+           i=str(line[:-1]).split()
+           inStatus[cnt]=[i,[False,False,False]]
            instInit+=[cnt]
            resStation[cnt]=[False,"","","","","","","",0,0]
+           instExe[cnt]=[i[0],cnt,None]
            line = fp.readline()
            cnt += 1
 loadCode()
+
+def getStrListP(l,n,i):
+    p=""
+    tmp=""
+    c=0
+    while(c!=i):
+        p+=" "
+        c+=1
+    for x in l:
+        if(str(x)==""):
+            tmp="-"
+        else:
+            tmp=x
+        p+=str(tmp)
+        c = len(str(tmp))
+        while(c!=n):
+            p+=" "
+            c+=1
+    return p
 
 def printInStatus():
     file = open("output.txt","a")
     o = list(inStatus.keys())
     o.sort()
     print("Instruction Status")
-    file.write("Instruction Status\n") 
-    print("[      Instruction      ] [Issue  Execute  WriteR]")
-    file.write("[      Instruction      ] [Issue  Execute  WriteR]\n")
+    file.write("INSTRUCTION STATUS\n") 
+    print("[          INSTRUCTION          ]       [ISSUE     EXECUTE   W_RESU]")
+    file.write("-----------INSTRUCTION-------------------ISSUE-----EXECUTE---W_RESU-\n")
     for x in o:
-        print(inStatus[x][0],inStatus[x][1])
-        file.write(str(inStatus[x][0]))
+        inst=getStrListP(inStatus[x][0],10,0)
+        status=getStrListP(inStatus[x][1],10,0)
+        print(inst,status)
+        file.write(inst)
         file.write(" ")
-        file.write(str(inStatus[x][1]))
+        file.write(status)
         file.write("\n")
+    print("---------------------------------------------------------------------")
+    file.write("--------------------------------------------------------------------------------------------------\n")
     file.close()
 
 def printRegStatus():
     file = open("output.txt","a")
-    o = list(regStatus.keys())
-    o.sort()
-    p=""
-    for x in o:
-        p+=str(regStatus[x])+"   "
+    regsName=['-F0-','-F1-','-F2-','-F3-','-F4-','-F5-','-F6-','-F7-','-F8-','-F9-','-F10-','-R1-','-R2-','-R3-','-R4-','-R5-','-R6-','-R7-']
+    deps=[]
+    for x in regsName:
+        deps+=[str(regStatus[x[1:-1]])]
     print("Register Status")
-    file.write("Register Status\n")
-    print("F0  F1  F10  F2  F3  F4  F5  F6  F7  F8  F9  R1  R2  R3  R4  R5  R6  R7")
-    file.write("F0  F1  F10  F2  F3  F4  F5  F6  F7  F8  F9  R1  R2  R3  R4  R5  R6  R7\n")
+    file.write("REGISTER STATUS\n")
+    rN = getStrListP(regsName,5,0)
+    p = getStrListP(deps,5,1)
+    print(rN)
+    file.write(rN)
+    file.write("\n")
     print(p)
     file.write(p)
     file.write("\n")
+    print("---------------------------------------------------------------------")
+    file.write("--------------------------------------------------------------------------------------------------\n")
     file.close()
     
 def printRegs():
@@ -165,13 +200,19 @@ def printResStation():
     o = list(resStation.keys())
     o.sort()
     print("Reservation Stations")
-    file.write("Reservation Stations\n")
-    print("[busy   op    vj    vk    qj    qk    a    sd    tEx  tCB]")
-    file.write("[busy   op    vj    vk    qj    qk    a    sd    tEx  tCB]\n")
+    file.write("RESERVATION STATION\n")
+    enc=['--BUSY--','--OP--','--Vj--','--Vk--','--Qj--','--Qk--','--ADDR--','--STdep--','--TIMEex--','--TIMEcb']
+    strEnc=getStrListP(enc,10,0)
+    print(strEnc)
+    file.write(strEnc)
+    file.write("\n")
     for x in o:
-        print(resStation[x])
-        file.write(str(resStation[x]))
+        rS=getStrListP(resStation[x],10,2)
+        print(rS)
+        file.write(rS)
         file.write("\n")
+    print("---------------------------------------------------------------------")
+    file.write("--------------------------------------------------------------------------------------------------\n")
     file.close()
     
 def issue(nI,inst):
@@ -218,10 +259,12 @@ def doIssue():
             
 def execute(nI,time):
     global instFinish
+    global cont
     updateResSta(nI,8,time-1)
     if(time-1 == 0):
         inStatus[nI][1][1]=True
         instFinish+=[nI]
+        instExe[nI][2]=cont
     
 
 def write(nI,t):
@@ -303,13 +346,13 @@ frame.pack()
 
 
 button = tk.Button(frame, 
-                   text="set values", 
+                   text="SET VALUES", 
                    fg="deep sky blue",
                    command=write_ventana)
 button.pack(side=tk.LEFT)
 
 
-T = tk.Text(ventana,height=30,width=100)
+T = tk.Text(ventana,height=35,width=100)
 T.pack()
 
 
@@ -353,6 +396,21 @@ button = tk.Button(frame,
                    command=reset)
 button.pack(side=tk.RIGHT)
 
+exit_btn=Button(frame,text='EXIT',fg="red",command=ventana.destroy)
+exit_btn.pack(side=tk.RIGHT)
+
+def getExeInst():
+    global instExe
+    o = list(instExe.keys())
+    o.sort()
+    p=""
+    for x in o:
+        p+=getStrListP(instExe[x],15,0)
+        p+="\n"
+    return p
+    
+    
+    
 def nextTransition():
     global T
     global init
@@ -363,8 +421,8 @@ def nextTransition():
         init = False
         file = open("output.txt","a")
         deleteContent(file)
-        print("---------------------------CICLO: "+str(cont)+"-----------------------")
-        file.write("---------------------------CICLO: "+str(cont)+"-----------------------\n")
+        print("---------------------------------------------CICLO: "+str(cont)+"------------------------------------------")
+        file.write("-----------------------------------------------CICLO: "+str(cont)+"-------------------------------------------\n")
         file.close()
         doIssue()  
         printRegStatus()
@@ -378,23 +436,24 @@ def nextTransition():
         if(finish()):
             file = open("output.txt","a")
             deleteContent(file)
-            print("Ingreso de Instrucciones")
-            file.write("Ingreso de Instrucciones\n")
-            print(instInit)
-            file.write(str(instInit)+"\n")
-            print("Salida de Instrucciones")
-            file.write("Salida de Instrucciones\n")
-            print(list(dict.fromkeys(instFinish)))
-            file.write(str(list(dict.fromkeys(instFinish)))+"\n")
-            print("end")
-            file.write("end\n")
+            print("---------------------------END-----------------------")
+            file.write("---------------------------END-----------------------\n")
+            print("Comportamiento de Instrucciones")
+            file.write("Comportamiento de Instrucciones\n")
+            enc = getStrListP(["Instruction","InOrder","OutOfOrder"],15,0)
+            file.write(enc+"\n")
+            print(enc)
+            file.write(getExeInst())
+            print(getExeInst())
+            print("---------------------------END-----------------------")
+            file.write("---------------------------END-----------------------\n")
             file.close()
             writeToWindow()
         else:
             file = open("output.txt","a")
             deleteContent(file)
-            print("---------------------------CICLO: "+str(cont)+"-----------------------")
-            file.write("---------------------------CICLO: "+str(cont)+"-----------------------\n")
+            print("---------------------------------------------CICLO: "+str(cont)+"------------------------------------------")
+            file.write("-----------------------------------------------CICLO: "+str(cont)+"-------------------------------------------\n")
             file.close()
             doWrite()
             doExe()
@@ -411,7 +470,6 @@ slogan = tk.Button(frame,
                    fg = "green",
                    command=nextTransition)
 slogan.pack(side=tk.LEFT)
-
 
 
 
