@@ -389,6 +389,9 @@ def reset():
     cont = 0
     ciclos = 0
     loadCode()
+    
+exit_btn=Button(frame,text='EXIT',fg="red",command=ventana.destroy)
+exit_btn.pack(side=tk.RIGHT)
 
 button = tk.Button(frame, 
                    text="RESET", 
@@ -396,8 +399,7 @@ button = tk.Button(frame,
                    command=reset)
 button.pack(side=tk.RIGHT)
 
-exit_btn=Button(frame,text='EXIT',fg="red",command=ventana.destroy)
-exit_btn.pack(side=tk.RIGHT)
+
 
 def getExeInst():
     global instExe
